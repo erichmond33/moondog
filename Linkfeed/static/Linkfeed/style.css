@@ -16,6 +16,10 @@
 	font-family: Rich-Georgia;
 	src: url("https://bloge.li/fonts/Rich-Georgia.ttf");
 }
+@font-face {
+	font-family: mono;
+	src: url("https://bloge.li/fonts/TechnoScriptEF.ttf");
+}
 
 html {
 	scroll-behavior: smooth;
@@ -31,6 +35,9 @@ body{
 	font-weight: 300;
 	overflow-y:scroll;
 	overflow-x: hidden;
+}
+p {
+	font-size: 18px;
 }
 .vignette {
 	position: fixed;
@@ -48,7 +55,18 @@ h1,h2,h3,h4,dt,dl#tweetlist dt,footer,label,#commentlist ol li cite,div.blogpare
 	font-style:normal;
 	text-align:left;
 }
-
+small,footer,dl#tweetlist dt{
+	font-size: .75em;
+	font-family: mono;
+	color:#666;
+}
+.mono {
+	font-family: mono;
+	color:#666;
+}
+.grey {
+	color:#666;
+}
 ul {
 	list-style: none;
 	margin-left: 0;
@@ -241,9 +259,9 @@ a.row-follow-button:hover {
 	background-color: none;
 }
 
-.post {
-	border-bottom: 1.65px solid black;
-}
+/* .post {
+	border-bottom: 1.65px solid #adadad;
+} */
 
 .post-body, .post-title, .profile-link {
 	word-wrap: break-word;
@@ -303,7 +321,7 @@ a.row-follow-button:hover {
 }
 
 .svg {
-	width: 28px;
+	width: 22px;
 }
 
 #post-comment:hover {
@@ -319,6 +337,13 @@ a.row-follow-button:hover {
 @media (max-width: 456px) {
 	.vignette {
 		box-shadow: 0 0 200px rgba(0,0,0,0.15) inset;
+	}
+	body{
+		font-size: 16px;
+		text-align: left;
+	}
+	body p{
+		line-height: 26px;
 	}
 	#nav-header {
 		padding-left: 15px;
@@ -337,7 +362,7 @@ a.row-follow-button:hover {
 		padding: 5px 6.5px 5px 6.5px;
 	}
 	.svg {
-		width: 23px;
+		width: 16px;
 	}
 	.post-stats {
 		font-size: 80%;

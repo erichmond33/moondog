@@ -1,55 +1,78 @@
 {% load static %}
 
 <div class="container-fluid">
-    <div class="post py-3 my-0">
+    <div class="post py-5 my-0">
         <a href="{% url 'profile' post.user.username %}" class="wrapped-profile-link">
             <div class="row wrapped-profile">
             </div>
         </a>
         <a href="{{ post.body }}" target="_blank" class="wrapped-post-link">
             <div class="wrapped-post pb-0">
-                <div class="mb-3">
+                <h4 class="mb-0" >{{ post.title }}</h4>
+                <div class="mb-0 grey mono">
                     {% if post.is_imported_rss_feed_post %}
-                    <h3 id="posted-by-{{ post.id }}" class="mb-0 post-user truncate-text" style="cursor: pointer;"><span class="username-link" data-username="{{ post.user.username }}">RSS Feed ({{ post.imported_rss_feed.link|slice:"8:" }})</span></h3>
+                    <p id="posted-by-{{ post.id }}" class="mb-0 post-user truncate-text" style="cursor: pointer;"><span class="username-link" data-username="{{ post.user.username }}">RSS Feed ({{ post.imported_rss_feed.link|slice:"8:" }})</span></p>
                     {% elif not post.is_rss_feed_post or post.is_rss_feed_post %} <!-- the latter means it is a mirrored rss post -->
-                    <h3 id="posted-by-{{ post.id }}" class="mb-0 post-user truncate-text" style="cursor: pointer;"><span class="username-link" data-username="{{ post.user.username }}">{{ post.user.profile.display_name }} ({{ post.user.alloweddomain.domain|slice:"8:" }})</span></h3>
+                    
+                        <p id="posted-by-{{ post.id }}" class="mb-0 post-user truncate-text" style="cursor: pointer;"><span class="username-link" data-username="{{ post.user.username }}">by {{ post.user.profile.display_name }}</span><span class="ml-0"> on {{ post.timestamp|date:"b j"|capfirst }}</span></p>
+                    
                     {% endif %}
                 </div>
-                <div class="mb-0">{{ post.title }}</div>
-                <p class="post-body mt-2">{{ post.body }}</p>
+                <p class="post-body mt-4 pb-3">{{ post.body }}</p>
             </div>
         </a>
-        <div class="row justifty-content-end mt-2">
-            <div class="col">
-                <img src="{% static 'Linkfeed/reshare.svg' %}" alt="repost" class="share-svg svg" width="32" height="32" fill="black" viewBox="0 0 32 32" onclick="rePostPost('{{ post.id }}')">
+        <div class="mt-0 text-center d-flex justify-content-start align-items-center mono">
+            <!-- <div class=""><a>some text</a></div>
+                <div class=""><a>some text</a></div>
+                <div class=""><a>some text</a></div> -->
+                
+                <div class="d-flex mr-5">
+                    <img src="{% static 'Linkfeed/reshare.svg' %}" class="svg">
+                    <p class="mt-1 mb-0 ml-1">100</p>
+                </div>
+                <div class="d-flex mr-5">
+                    <img src="{% static 'Linkfeed/comment.svg' %}" class="svg">
+                    <p class="mt-1 mb-0 ml-1">100</p>
+                </div>
+                <div class="d-flex mr-5">
+                    <img src="{% static 'Linkfeed/like.svg' %}" class="svg">
+                    <p class="mt-1 mb-0 ml-1">100</p>
+                </div>
+                <!-- <div class="d-flex">
+                    <p class="grey m-0 small">{{ post.timestamp|date:"b j"|capfirst }}</p>
+                </div> -->
             </div>
-            <div class="col">
-                <img src="{% static 'Linkfeed/like.svg' %}" alt="Like" class="like-svg svg" width="32" height="32" fill="black" class="bi bi-heart" viewBox="0 0 32 32" onclick="likePost('{{ post.id }}')">
-            </div>
-            <div class="col">
-                <img src="{% static 'Linkfeed/comment.svg' %}" alt="Like" class="like-svg svg" width="32" height="32" fill="black" class="bi bi-heart" viewBox="0 0 32 32" onclick="likePost('{{ post.id }}')">
-            </div>
-            <div class="col">
-                <img src="{% static 'Linkfeed/delete.svg' %}" alt="Delete" class="delete-btn svg mb-1" data-post-id="{{ post.id }}" width="28" height="28" fill="black" class="bi bi-trash" viewBox="0 0 32 32">
-            </div>
-        </div>
+            
+        
+
+        <!-- <nav><div id="nav-links"><a href="/#me">Reshare</a><div>|</div><a href="/#now">Like</a><div>|</div><a href="/#articles">Comment</a><div>|</div><a href="/#book">Delete</a></div></nav>
+                    <style>#nav-links {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                    #nav-links a {
+                        font-family: Nexa;
+                    }                    </style> -->
+
+
         <!-- <div class="row">
             <div class="col post-actions d-flex justify-content-end align-items-end">
                 <form id="shareForm{{ post.id }}" action="{% url 'repost' post.pk %}" method="POST" class="d-inline">
                     {% csrf_token %}
                     <input type="hidden" name="post_id" value="{{ post.id }}">
                 </form>
-                <img src="{% static 'Linkfeed/reshare.svg' %}" alt="repost" class="share-svg svg" width="32" height="32" fill="black" viewBox="0 0 32 32" onclick="rePostPost('{{ post.id }}')">
+                <img src="{% static 'Linkfeed/reshare.svg' %}" alt="repost" class="share-svg svg" width="24" height="32" fill="black" viewBox="0 0 32 32" onclick="rePostPost('{{ post.id }}')">
                 <span class="post-stats">{{post.repost_count}}</span>
                 <form id="likeForm{{ post.id }}" action="{% url 'like_post' post.pk %}" method="POST" class="d-inline">
                     {% csrf_token %}
                     <input type="hidden" name="post_id" value="{{ post.id }}">
                 </form>
                 {% if post.liked %}
-                <img src="{% static 'Linkfeed/liked.svg' %}" alt="Like" class="like-svg svg" width="32" height="32" fill="black"
+                <img src="{% static 'Linkfeed/liked.svg' %}" alt="Like" class="like-svg svg" width="24" height="32" fill="black"
                 class="bi bi-heart" viewBox="0 0 32 32" onclick="likePost('{{ post.id }}')">
                  {% else %}
-                 <img src="{% static 'Linkfeed/like.svg' %}" alt="Like" class="like-svg svg" width="32" height="32" fill="black"
+                 <img src="{% static 'Linkfeed/like.svg' %}" alt="Like" class="like-svg svg" width="24" height="32" fill="black"
                 class="bi bi-heart" viewBox="0 0 32 32" onclick="likePost('{{ post.id }}')">
                 {% endif%}
                 <span id="likeCount{{ post.id }}" class="post-stats">{{ post.total_likes }}</span>
