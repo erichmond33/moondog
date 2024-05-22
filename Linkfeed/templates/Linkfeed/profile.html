@@ -35,8 +35,8 @@
                 <a class="mono truncate-text pl-0" id="profile-link" target="_blank" href="{{profile.link}}">{{profile.link}}</a>
             </div>
     </div>
-    <!-- <div class="row my-4" id="row-follow">
-        <div class="col d-flex justify-content-around">
+    <!--<div class="row my-4" id="row-follow">
+         <div class="col d-flex justify-content-around">
             <a class="row-follow-button" id="followers-link" style="cursor: pointer;">Followers: {{ profile.follower.count }}</a>
             <a class="row-follow-button" id="following-link" style="cursor: pointer;">Following: {{ profile.following.count }}</a>
             {% if profile.user.username == user.username %}
@@ -72,8 +72,14 @@
             </script>
             </script>
             </script>
-        </div>
+        </div> 
     </div> -->
+    <div class="d-flex justify-content-end">
+        <!-- <div class="d-flex"> -->
+            <a class="button-circle"><span class="small white mono">Following: 100</span></a>
+        <!-- </div> -->
+        <a class="button-circle"><img src="{% static 'Linkfeed/settings.svg' %}" class="svg"></a>
+    </div>
 </div>
 
 <div id="posts" class="mt-5">
