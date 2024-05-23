@@ -38,10 +38,11 @@
         {% endblock %}
     </div>
 
-    <div class="container-fluid px-3">
+    <div class="container-fluid">
             <!-- <div class="row"> -->
                 <!-- <div class="col-12" id="username-header-div"> -->
-                    <div id="username-header" class="header truncate-text">
+                    <!-- <div id="username-header" class="header truncate-text"> -->
+                    <h1 id="username-header" class="header truncate-text">
                     {% if request.resolver_match.url_name == 'current_user_profile' or request.resolver_match.url_name == 'profile' %}
                         <a href="{% url 'feed' profile.user.username %}">{{ profile.display_name }}</a>
                     {% elif request.resolver_match.url_name == 'current_user_feed' or request.resolver_match.url_name == 'feed' %}
@@ -51,27 +52,11 @@
                     {% else %}
                         <a href="{% url 'landing' %}">Linkfeed</a>
                     {% endif %}
-                    </div>
+                    </h1>
                 <!-- </div> -->
                 <!-- <div class="col-12"> -->
-                    <!-- <nav>
-                        <div id="nav-links"><a href="/#me">Me</a>
-                            <div>|</div><a href="/#now">Now</a>
-                            <div>|</div><a href="/#articles">Blog</a>
-                            <div>|</div><a href="/#book">Book</a>
-                            <div>|</div><a href="/#misc">Misc</a>
-                        </div>
-                    </nav> -->
-                    <style>#nav-links {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                    }
-                    #nav-links a {
-                        font-family: Nexa;
-                    }
-                    
-                    </style>
+                    {% block stats %}
+                    {% endblock %}
                 <!-- </div> -->
                 <!-- <div class="col-2 d-flex justify-content-end align-items-center">
                     <button class="open-btn" id="open-btn" onclick="openNav()"><h1 id="nav-header" class="header">¬</h1></button>

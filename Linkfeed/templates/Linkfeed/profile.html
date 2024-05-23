@@ -28,12 +28,42 @@
 {% endif %}
 {% endblock %}
 
+{% block stats %}
+<nav>
+    <div id="nav-links">
+        <a href="/#me"><span class="">Feed</span> <span class=""></span></a>
+        <div>|</div><a href="/#now">RSS<span class=""></span></a>
+        <div>|</div><a href="/#articles">CSS</a>
+        <div>|</div><a href="/#articles">Edit</a>
+    </div>
+</nav>
+<style>#nav-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 1px;
+}
+#nav-links a {
+    font-family: Nexa;
+}
+
+</style>
+{% endblock %}
+
 {% block body %}
 <div class="container-fluid">   
-    <div class="row">
+    <!-- <div class="row">
             <div class="col-12">
-                <a class="mono truncate-text pl-0" id="profile-link" target="_blank" href="{{profile.link}}">{{profile.link}}</a>
+                <p><a class="black truncate-text" id="profile-link" target="_blank" href="{{profile.link}}">{{profile.link}}</a></p>
             </div>
+    </div> -->
+    <div class="d-flex justify-content-between mono grey ml-auto">
+        <p class="m-0 ">Following: 100</p>
+        <!-- <div class="">&nbsp;&nbsp;&nbsp;</div> -->
+        <p class="m-0 ">Followers: 250</p>
+    </div>
+    <div class="d-flex justify-content-center align-items-center mt-5">
+        <p class=""><a class="big mono truncate-text" id="profile-link" target="_blank" href="{{profile.link}}">BlogE.li</a></p>
     </div>
     <!--<div class="row my-4" id="row-follow">
          <div class="col d-flex justify-content-around">
@@ -74,12 +104,10 @@
             </script>
         </div> 
     </div> -->
-    <div class="d-flex justify-content-end">
-        <!-- <div class="d-flex"> -->
+    <!-- <div class="d-flex justify-content-end">
             <a class="button-circle"><span class="small white mono">Following: 100</span></a>
-        <!-- </div> -->
-        <a class="button-circle"><img src="{% static 'Linkfeed/settings.svg' %}" class="svg"></a>
-    </div>
+            <a class="button-circle"><img src="{% static 'Linkfeed/settings.svg' %}" class="svg"></a>
+    </div> -->
 </div>
 
 <div id="posts" class="mt-5">

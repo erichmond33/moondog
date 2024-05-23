@@ -30,11 +30,17 @@ body{
 	font-family: Rich-Georgia, 'Times New Roman', Times, serif, sans-serif;
 	font-size:20px;
 	line-height:30px;
+	padding: 5px;
+    padding-right: 1em;
+    padding-left: 1em;
 	background-color:#fff;
 	color:#000;
 	font-weight: 300;
 	overflow-y:scroll;
 	overflow-x: hidden;
+}
+.container-fluid {
+	padding: 0;
 }
 p {
 	font-size: 18px;
@@ -63,17 +69,26 @@ small,footer,dl#tweetlist dt{
 .mono {
 	font-family: mono;
 }
+.georgia {
+	font-family: Rich-Georgia;
+}
 .grey {
 	color:#666;
 }
 .white {
 	color: white;
 }
+.black {
+	color: black;
+}
 .nexa {
 	font-family: Nexa;
 }
 .small {
 	font-size: .75em;
+}
+.big {
+	font-size: 1.25em;
 }
 ul {
 	list-style: none;
@@ -127,7 +142,10 @@ pre {
 }
 
 #profile-link {
-	margin-left: 3px;
+	margin-left: 2px;
+	color: black;
+	text-decoration: underline;
+	/* color: #EA322E; */
 }
 
 .red-button {
@@ -169,12 +187,12 @@ pre {
 
 .header {
 	font-family: Sabado, sans-serif;
-    font-size: 3.5em;
+    font-size: 2.5em;
 	padding-bottom: 15px;
 	padding-top: 5px;
 	margin-bottom: 0px;
 	margin-top: 10px;
-	line-height: 80%;
+	/* line-height: 80%; */
 	border-radius: .25rem;
 }
 
@@ -195,7 +213,7 @@ pre {
 	text-decoration-thickness: 2px;
 }
 #username-header {
-	line-height: .8em;
+	line-height: .9em;
 	padding: 0;
 }
 
@@ -378,7 +396,7 @@ a.row-follow-button:hover {
 		background-color: #EA322E;
 	}
 	.header {
-		font-size:2em;
+		font-size:2.5em;
 	}
 	#row-follow {
 		font-size: 80%;
@@ -393,7 +411,7 @@ a.row-follow-button:hover {
 		font-size: 80%;
 	}
 	#profile-link {
-		font-size: 80%;
+		font-size: 1rem;
 	}
 }
 
