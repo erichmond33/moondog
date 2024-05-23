@@ -274,21 +274,38 @@ a.row-follow-button:hover {
 }
 
 #title-input {
+	color: black;
 	font-size: 1.5rem;
 	height: calc(1.5em + .3rem + 2px);
 	line-height: 100%;
+	border-radius: 0;
+	padding: 0 5px 0 5px;
+}
+
+#title-input::placeholder {
+	color: #666;
 }
 
 #body-input {
-	font-size: 20px;
+	font-size: 18px;
 	height: calc(1.5em + .3rem + 2px);
 	line-height: 100%;
+	color: #000;
+	border-radius: 0;
+	border-right: none;
+	padding: 0 5px 0 5px;
+}
+#body-input::placeholder {
+	color: #666;
 }
 
 #create-post-button {
+	font-size: 18px;
+	font-family: Nexa;
 	width: 100%;
 	height: calc(1.5em + .3rem + 2px);
 	line-height: 100%;
+	border-radius: 0;
 }
 #create-post-button:hover {
 	color: white;
@@ -342,6 +359,7 @@ a.row-follow-button:hover {
 
 .post-title {
     font-family: Nexa, sans-serif;
+	border: none;
 }
 
 .post-user {
@@ -381,6 +399,9 @@ a.row-follow-button:hover {
 	body{
 		font-size: 16px;
 		text-align: left;
+	}
+	h1,h2,h3,h4 {
+		font-size: 21px;
 	}
 	p {
 		font-size: 16px;
