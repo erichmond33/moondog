@@ -1,3 +1,20 @@
+- make the website white space dynamic
+- make the website text responsive
+**- fix the highlights on the post form
+- connect the buttons to their functionality
+- Make RSS update once a day
+- Display the option to refresh RSS right now
+**- add links to following/followers
+**- make following and followers stats have the right spacing
+**- make the stats display with a max of 4 chars
+**- home button?
+**- make the fields required on the create form post
+- add a delete button
+- write out why you should care
+**- make edit button show follow/following
+
+
+
 date: 2024-03-3
 
 Why is it cool?

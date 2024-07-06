@@ -31,10 +31,17 @@
 {% block stats %}
 <nav>
     <div id="nav-links">
-        <a href="/#me"><span class="">Feed</span> <span class=""></span></a>
-        <div>|</div><a href="/#now">RSS<span class=""></span></a>
-        <div>|</div><a href="/#articles">CSS</a>
-        <div>|</div><a href="/#articles">Edit</a>
+        <a href="{% url 'current_user_feed' %}"><span class="">Feed</span> <span class=""></span></a>
+        <div>|</div><a href="#" id="mirror-rss-feed-btn" onclick="toggleMirrorRSSFeedPopup()">RSS<span class=""></span></a>
+        <div>|</div><a href="{% url 'landing' %}">Home</a>
+        <div>|</div>
+        {% if profile.user.username == user.username %}
+        <a href="#" onclick="toggleEditProfilePopup()">Edit</a>
+        {% elif not following %}
+        <a href="{% url 'follow_or_unfollow' profile.user.username %}">Follow</a>
+        {% elif following %}
+        <a href="{% url 'follow_or_unfollow' profile.user.username %}" id="following-text">Unfollow</a>
+        {% endif %}
     </div>
 </nav>
 <style>#nav-links {
@@ -52,22 +59,20 @@
 
 {% block body %}
 <div class="container-fluid">   
-    <!-- <div class="row">
-            <div class="col-12">
-                <p><a class="black truncate-text" id="profile-link" target="_blank" href="{{profile.link}}">{{profile.link}}</a></p>
-            </div>
-    </div> -->
     
     <div class="d-flex justify-content-center align-items-center mt-5 pt-5">
-        <p class=""><a class="big mono truncate-text" id="profile-link" target="_blank" href="{{profile.link}}">BlogE.li</a></p>
+        <p class=""><a class="big mono truncate-text" id="profile-link" target="_blank" href="{{profile.link}}">{{profile.stripped_link}}</a></p>
     </div>
     <div class="d-flex justify-content-between">
         <div class="d-flex flex-column justify-content-start mono grey mt-5 pt-5 pb-2 mb-2">
         </div>
         <div class="d-flex flex-column justify-content-end mono grey mt-5 pt-5 pb-2 mb-2">
-            <p class="small m-0 text-right" style="line-height: .95em;">Following 23&nbsp;&nbsp;</p>
-            <!-- <div class="">&nbsp;|&nbsp;</div> -->
-            <p class="m-0 small text-right" style="line-height: .95em;">Followers 1.5k</p>
+            <a href="{% url 'following' profile.user.username %}">
+                <p class="small m-0 text-right grey" style="line-height: .95em;">Following {{profile.following_count|safe}}</p>
+            </a>
+            <a href="{% url 'followers' profile.user.username %}">
+                <p class="m-0 small text-right grey" style="line-height: .95em;">Followers {{profile.followers_count|safe}}</p>
+            </a>
         </div>
     </div>
     <!--<div class="row my-4" id="row-follow">
@@ -121,13 +126,13 @@
         <div class="container-fluid">
             <form class="mx-auto mb-0 pb-5 pt-0" id="create-post-form" method="post" action="{% url 'create_post' %}">
                 {% csrf_token %}
-                <div class="post-title form-group mb-1">
-                    <input type="text" id="title-input" class="form-control" name="title" placeholder="Title">
+                <div class="post-title form-group mb-0">
+                    <input type="text" id="title-input" class="form-control" name="title" placeholder="Title" required>
                 </div>
                 <div class="d-flex w-100">
                     <div class="flex-grow-1">
                         <div class="post-body form-group">
-                            <input type="url" id="body-input" class="form-control" name="body" placeholder="URL">
+                            <input type="url" id="body-input" class="form-control" name="body" placeholder="URL" required>
                         </div>
                     </div>
                     <div class=" pl-0">

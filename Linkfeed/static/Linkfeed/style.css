@@ -44,6 +44,8 @@ body{
 }
 p {
 	font-size: 18px;
+	margin-block-start: 1em;
+    margin-block-end: 1em;
 }
 .vignette {
 	position: fixed;
@@ -152,10 +154,17 @@ pre {
 	background-color: #EA322E;
 	color: white;
 	font-size: 20px;
+	font-family: Nexa;
 }
 
 .red-button:hover {
 	color: white;
+}
+
+.red-button:focus {
+	outline: 0px solid transparent;
+	box-shadow: none;
+	background-color: #941100;
 }
 
 .red-button a {
@@ -278,7 +287,8 @@ a.row-follow-button:hover {
 	font-size: 1.5rem;
 	height: calc(1.5em + .3rem + 2px);
 	line-height: 100%;
-	border-radius: 0;
+	border-radius: 0.25em 0.25em 0 0;
+	border-bottom: none;
 	padding: 0 5px 0 5px;
 }
 
@@ -291,21 +301,33 @@ a.row-follow-button:hover {
 	height: calc(1.5em + .3rem + 2px);
 	line-height: 100%;
 	color: #000;
-	border-radius: 0;
+	border-radius: 0 0 0 0.25em;
 	border-right: none;
+	border-top: none;
 	padding: 0 5px 0 5px;
 }
 #body-input::placeholder {
 	color: #666;
 }
-
+input[type="text"]:focus {
+    outline: 0px solid transparent;
+	box-shadow: none;
+	border: 1px solid #ced4da;
+	border-top: 2px solid #EA322E;
+}
+input[type="url"]:focus {
+    outline: 0px solid transparent;
+	box-shadow: none;
+	border: 1px solid #ced4da;
+	border-bottom: 2px solid #EA322E;
+}
 #create-post-button {
 	font-size: 18px;
 	font-family: Nexa;
 	width: 100%;
 	height: calc(1.5em + .3rem + 2px);
 	line-height: 100%;
-	border-radius: 0;
+	border-radius: 0 0 .25em 0;
 }
 #create-post-button:hover {
 	color: white;
@@ -335,7 +357,7 @@ a.row-follow-button:hover {
 	color: black;
 }
 
-.wrapped-post-link:hover {
+/* .wrapped-post-link:hover {
     text-decoration: none;
 	color: black;
 }
@@ -351,7 +373,7 @@ a.row-follow-button:hover {
 .wrapped-profile:hover {
 	text-decoration: none;
 	background-color: #f8f9fa;
-}
+} */
 
 /* .post {
     border-bottom: 1px solid #a1a1a1;

@@ -2,27 +2,21 @@
 
 <div class="container-fluid">
     <div class="post pb-5 my-0">
-        <a href="{% url 'profile' post.user.username %}" class="wrapped-profile-link">
-            <div class="row wrapped-profile">
-            </div>
-        </a>
-        <a href="{{ post.body }}" target="_blank" class="wrapped-post-link">
-            <div class="wrapped-post pb-0">
-                <h4 class="mb-0" >{{ post.title }}</h4>
-                <div class="mb-0">
-                    {% if post.is_imported_rss_feed_post %}
-                    <p id="posted-by-{{ post.id }}" class="mb-0 post-user truncate-text" style="cursor: pointer;"><span class="username-link" data-username="{{ post.user.username }}">RSS Feed ({{ post.imported_rss_feed.link|slice:"8:" }})</span></p>
-                    {% elif not post.is_rss_feed_post or post.is_rss_feed_post %} <!-- the latter means it is a mirrored rss post -->
-                    
-                        
-                            <p id="posted-by-{{ post.id }}" class="mb-0 post-user truncate-text" style="cursor: pointer;"><span class="username-link" data-username="{{ post.user.username }}">{{ post.user.profile.display_name }} • {{ post.timestamp|date:"b j, Y"|capfirst }}</span><span class="ml-0"></span></p>
-                        
-                    
-                    {% endif %}
-                </div>
-                <p class="post-body mt-4 pb-3">{{ post.body }}</p>
-            </div>
-        </a>
+        <div class="wrapped-post pb-0">
+            <a href="{% url 'post' post.id %}" class="pl-1" id="post-comment">
+                <h4 class="mb-0 black" >{{ post.title }}</h4>
+            </a>
+            {% if post.is_imported_rss_feed_post %}
+                <p id="posted-by-{{ post.id }}" class="mb-0 post-user truncate-text" style="cursor: pointer;"><span class="username-link" data-username="{{ post.user.username }}">RSS Feed ({{ post.imported_rss_feed.link|slice:"8:" }})</span></p>
+            {% elif not post.is_rss_feed_post or post.is_rss_feed_post %} <!-- the latter means it is a mirrored rss post -->
+            <a href="{% url 'profile' post.user.username %}" target="_blank">
+                <p id="posted-by-{{ post.id }}" class="mb-0 post-user truncate-text black" style="cursor: pointer;">{{ post.user.profile.display_name }} • {{ post.timestamp|date:"b j, Y"|capfirst }}</p>
+            </a>
+            {% endif %}
+            <a href="{{ post.body }}" target="_blank">
+                <p class="post-body">{{ post.body }}</p>
+            </a>
+        </div>
         <div class="mt-0 text-center d-flex flex-wrap justify-content-between align-items-center">
             <!-- <div class="d-flex mr-auto pr-2 grey mono">
                 <p class="mt-1 mb-0 ml-1">{{ post.timestamp|date:"b j, Y"|capfirst }}</p>
@@ -30,19 +24,25 @@
             
             
                 <div class="d-flex mr-2 grey mono">
-                    <img src="{% static 'Linkfeed/reshare.svg' %}" class="svg">
+                    <form id="shareForm{{ post.id }}" action="{% url 'repost' post.pk %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_id" value="{{ post.id }}">
+                    </form>
+                    <img src="{% static 'Linkfeed/photos/reshare.svg' %}" class="svg">
                     <p class="mt-1 mb-0 ml-1">0&nbsp;&nbsp;&nbsp;</p>
                 </div>
-                <div class="d-flex mr-2 grey mono">
-                    <img src="{% static 'Linkfeed/comment.svg' %}" class="svg">
-                    <p class="mt-1 mb-0 ml-1">24&nbsp;&nbsp;</p>
-                </div>
+                <a href="{% url 'post' post.id %}" class="pl-1" id="post-comment">
+                    <div class="d-flex mr-2 grey mono">
+                        <img src="{% static 'Linkfeed/photos/comment.svg' %}" class="svg">
+                        <p class="mt-1 mb-0 ml-1">{{post.total_comments}}</p>
+                    </div>
+                </a>
                 <div class="d-flex mr-0 grey mono">
-                    <img src="{% static 'Linkfeed/like.svg' %}" class="svg">
+                    <img src="{% static 'Linkfeed/photos/like.svg' %}" class="svg">
                     <p class="mt-1 mb-0 ml-1">0&nbsp;&nbsp;&nbsp;</p>
                 </div>
                 <div class="d-flex mr-0 grey mono">
-                    <img src="{% static 'Linkfeed/more.svg' %}" class="svg">
+                    <img src="{% static 'Linkfeed/photos/more.svg' %}" class="svg">
                 </div>
         </div>
             
@@ -102,7 +102,7 @@
         </div> -->
     </div>
 </div>
-
+<!-- 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // When .wrapped-post is hovered, make the .post background-color: #f8f9fa
@@ -116,4 +116,4 @@
             });
         });
     });
-</script>
+</script> -->

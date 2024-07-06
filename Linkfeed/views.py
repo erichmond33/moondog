@@ -51,6 +51,10 @@ def profile(request, username):
     domain = AllowedDomain.objects.get(user=user)
     
     profile.link = domain.domain
+    profile.stripped_link = domain.strippedDomainLink()
+
+    profile.following_count = profile.formatCount("following")
+    profile.followers_count = profile.formatCount("followers")
 
     # Check if we are following them
     following = False
