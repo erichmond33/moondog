@@ -38,7 +38,7 @@ def landing(request):
     return render(request, "Linkfeed/landingpage.html")
 
 @login_required
-@CSPDecorator
+
 def current_user_profile(request):
     return profile(request, request.user.username)
 
@@ -73,7 +73,7 @@ def profile(request, username):
 
     return render(request, "Linkfeed/profile.html", {"posts": posts, "profile": profile, "following": following})
 
-@CSPDecorator
+
 @login_required
 def current_user_feed(request):
     return feed(request, request.user.username)    
@@ -202,7 +202,7 @@ def logout_view(request):
     })
 
 
-@CSPDecorator
+
 def post(request, post_id):
     if not request.user.is_authenticated:
         #if not return to login page
@@ -217,30 +217,42 @@ def post(request, post_id):
             if stuff.likes.filter(id=request.user.id).exists():
                 liked = True
             post = get_object_or_404(Post, id=post_id)
-            comments = Comment.objects.filter(post=post)  # Fetch comments associated with the post
+            comments = Comment.objects.filter(post=post, parent_comment=None)  # Fetch comments associated with the post
+            add_level(comments)
             return render(request, "Linkfeed/post.html", {"post": post, "comments": comments, 'stuff': stuff, 'total_likes': total_likes, 'liked': liked, 'profile': profile})
         except Http404:
             return HttpResponse("404 - Post Not Found", status=404)
         
-@CSPDecorator
+def add_level(comments, level=0):
+    for comment in comments:
+        comment.level = level
+        print(level)
+        add_level(comment.replies.all(), level + 1)
+
 def add_comment(request, post_id):
     if request.method == "POST":
         post = get_object_or_404(Post, id=post_id)
-        parent_comment_id = request.POST.get("parent_comment_id")  # Get the ID of the parent comment if it's a reply
-        parent_comment = None
-        if parent_comment_id:
-            parent_comment = get_object_or_404(Comment, id=parent_comment_id)
-        comment_body = request.POST.get("comment_body")
+        comment_body = request.POST.get("body")
+        # make suer the body doesn't have a tab at the begginingg?
+        comment_body = comment_body.strip()
+        # Create a new comment object and save it to the database
+        comment = Comment.objects.create(user=request.user, post=post, body=comment_body)
+        # Redirect to the post detail page after adding the comment
+        return redirect("post", post_id=post_id)
+
+def reply_comment(request, comment_id):
+    if request.method == "POST":
+        parent_comment = get_object_or_404(Comment, id=comment_id)
+        post = parent_comment.post
+        comment_body = request.POST.get("body")
         # Create a new comment object and save it to the database
         comment = Comment.objects.create(user=request.user, post=post, body=comment_body, parent_comment=parent_comment)
         # Redirect to the post detail page after adding the comment
-        return redirect("post", post_id=post_id)
-    # Handle other HTTP methods if necessary
-
+        return redirect("post", post_id=post.id)
 
 from django.shortcuts import redirect
 from django.contrib import messages
-@CSPDecorator
+
 def delete_comment(request, comment_id):
     if request.method == "POST" or request.method == "GET":
         comment = get_object_or_404(Comment, id=comment_id)
@@ -263,7 +275,7 @@ def delete_comment(request, comment_id):
 
 
 
-@CSPDecorator
+
 def delete_post(request, post_id):
     if request.method == "POST":
         post = get_object_or_404(Post, id=post_id)
@@ -275,7 +287,7 @@ def delete_post(request, post_id):
         else:
             # Handle unauthorized deletion
             return HttpResponseForbidden("You are not authorized to delete this post.")
-@CSPDecorator
+
 def edit_post(request, post_id):
     if request.method == "POST":
         post = get_object_or_404(Post, id=post_id)
@@ -292,7 +304,7 @@ def edit_post(request, post_id):
             return HttpResponseForbidden("You are not authorized to edit this post.")
     # Handle other HTTP methods if necessary
 
-@CSPDecorator
+
 @login_required  # Ensure the user is logged in 
 def edit_profile(request):
     if request.method == "POST":
@@ -334,7 +346,7 @@ def edit_profile(request):
         return HttpResponseForbidden("You are not authorized to edit this profile.")
 
 
-@CSPDecorator
+
 def create_post(request):
     if request.method == "POST":
         title = request.POST.get('title')
@@ -348,28 +360,20 @@ def create_post(request):
         return render(request, "Linkfeed/create_post.html")
     
 
-@CSPDecorator
 @login_required
-def like_view(request, pk):
-    # Assuming your Post model and like logic remains the same
-    post = get_object_or_404(Post, id=request.POST.get('post_id'))
-
-    if post.likes.filter(id=request.user.id).exists():
-        post.likes.remove(request.user)
+def like_view(request, post_id):
+    if request.method == 'POST':
+        post = Post.objects.get(id=post_id)
+        user = request.user
+        if user in post.likes.all():
+            post.likes.remove(user)
+        else:
+            post.likes.add(user)
+        return JsonResponse({'total_likes': post.total_likes()})
     else:
-        post.likes.add(request.user)
-
-    # Get the referring URL
-    referring_url = request.META.get('HTTP_REFERER')
-
-    # Append the pk parameter to the referring URL
-    redirect_url = f"{referring_url}?pk={pk}" if referring_url else reverse('index')
-
-    # Redirect to the modified URL
-    return HttpResponseRedirect(redirect_url)
+        return HttpResponseBadRequest("Invalid request method")
 
 
-@CSPDecorator
 @login_required
 def followers_view(request, username):
     # Get the profile of the user whose followers you want to see
@@ -378,7 +382,7 @@ def followers_view(request, username):
     followers = user_profile.follower.all()
     return render(request, 'Linkfeed/followers.html', {'followers': followers})
 
-@CSPDecorator
+
 @login_required
 def following_view(request, username):
     # Get the profile of the user whose following you want to see
@@ -387,7 +391,7 @@ def following_view(request, username):
     following = user_profile.following.all()
     return render(request, 'Linkfeed/following.html', {'following': following})
 
-@CSPDecorator
+
 @login_required
 def follow_view(request, username):
     if not request.user.is_authenticated:
@@ -413,7 +417,7 @@ def follow_view(request, username):
 
         # Redirect to the profile of the user being followed or unfollowed
         return HttpResponseRedirect(reverse('profile', args=[username]))
-@CSPDecorator    
+    
 @login_required
 def follow_or_unfollow(request, username):
     # Retrieve the profile of the user to follow
@@ -480,7 +484,7 @@ def parse_timestamp(timestamp_str):
     return None  # Parsing unsuccessful
 
 
-@CSPDecorator
+
 def mirror_rss_feed(request):
     form = RSSFeedForm(request.POST or None)
     user = request.user
@@ -560,7 +564,7 @@ def mirror_rss_feed(request):
 
 
 
-@CSPDecorator
+
 def imported_rss_feed(request):
     form = ImportedRSSFeedForm(request.POST or None)
     user = request.user
@@ -646,7 +650,7 @@ def imported_rss_feed(request):
 
 
 
-@CSPDecorator
+
 def delete_imported_feed(request, feed_id):
     imported_rss_feed = get_object_or_404(ImportedRSSFeed, id=feed_id, user=request.user)
     # Delete posts associated with the imported RSS feed
@@ -655,7 +659,7 @@ def delete_imported_feed(request, feed_id):
     imported_rss_feed.delete()
     return redirect('current_user_feed')
 
-@CSPDecorator
+
 def refresh_mirrored_rss_feed(request):
     user = request.user
     rss_feed = RSSFeed.objects.filter(user=user).first()
@@ -681,7 +685,7 @@ def refresh_mirrored_rss_feed(request):
                 )
     return redirect('profile')
 
-@CSPDecorator
+
 def refresh_imported_rss_feed(request):
     user = request.user
     imported_rss_feeds = ImportedRSSFeed.objects.filter(user=user)
@@ -718,13 +722,12 @@ from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
 
 import datetime
-@CSPDecorator
 def repost_view(request, post_id):
     original_post = get_object_or_404(Post, pk=post_id)
 
     try:
         # Attempt to retrieve the retweeted post for the current user
-        retweeted_post = Post.objects.get(user=request.user, is_rss_feed_post=False, is_imported_rss_feed_post=False, imported_rss_feed=None, title=f"Repost: {original_post.title}")
+        retweeted_post = Post.objects.get(user=request.user, title=f"Repost: {original_post.title}")
         
         # If the retweeted post exists, delete it and decrement the repost count
         original_post.repost_count -= 1

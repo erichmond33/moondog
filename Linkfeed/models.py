@@ -74,10 +74,15 @@ class Comment(models.Model):
     body = models.TextField()
     likes = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
+    level = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.username} : {self.post.title} : {self.body} : {self.timestamp}"
-
+    
+    def save(self, *args, **kwargs):
+        if self.parent_comment:
+            self.level = self.parent_comment.level + 1
+        super().save(*args, **kwargs)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -98,11 +103,11 @@ class Profile(models.Model):
 
         # Determine the appropriate format based on the number of followers
         if count < 10:
-            formatted = f"&nbsp;&nbsp;&nbsp;{count}"  # Three spaces for single digit numbers
+            formatted = f"{count}"  # Three spaces for single digit numbers
         elif count < 100:
-            formatted = f"&nbsp;&nbsp;{count}"  # Two spaces for two digit numbers
+            formatted = f"{count}"  # Two spaces for two digit numbers
         elif count < 1000:
-            formatted = f"&nbsp;{count}"  # One space for three digit numbers
+            formatted = f"{count}"  # One space for three digit numbers
         elif count < 10000:
             formatted = f"{count}"  # Exact count for 1000-9999
         elif count < 100000:
@@ -113,10 +118,6 @@ class Profile(models.Model):
             formatted = f"{count // 1000000}m"  # Millions without decimal for 1m-9m
         else:
             formatted = f"{count / 1000000:.1f}m"  # Millions with one decimal for 10m and more
-
-        # Right justify and fill with non-breaking spaces to make exactly 4 characters
-        if len(formatted) < 4:
-            formatted = formatted.rjust(4).replace(' ', '&nbsp;')
 
         return formatted
 
