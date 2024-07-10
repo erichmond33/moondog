@@ -20,18 +20,19 @@
         {% if user.is_authenticated %}
             <a href="{% url 'profile' profile.user.username %}">Profile</a> |
             <a href="{% url 'feed' profile.user.username %}">Feed</a> |
-            <a href="#">RSS</a> |
+            <a href="{% url 'rss' %}">RSS</a> |
             <a href="{% url 'current_user_profile' %}">Home</a> |
             {% if profile.user.username == user.username %}
                 <a href="#" onclick="toggleEditProfilePopup()">Edit</a>
-            {% elif not following %}
+            <!-- Check if we are follwoing them -->
+            {% elif user not in profile.follower.all %}
                 <a href="{% url 'follow_or_unfollow' profile.user.username %}">Follow</a>
-            {% elif following %}
+            {% elif user in profile.follower.all %}
                 <a href="{% url 'follow_or_unfollow' profile.user.username %}" id="following-text">Unfollow</a>
             {% endif %}
-        {% endif %}
+        {% endif %}     
     </nav>
-    {% block body %}
+    {% block body %}    
     {% endblock %}
     {% csrf_token %}
 </body>

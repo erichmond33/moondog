@@ -26,15 +26,11 @@ urlpatterns = [
     path('followers/<str:username>/', views.followers_view, name='followers'),
     path('following/<str:username>/', views.following_view, name='following'),
     path('follow/<str:username>/', views.follow_or_unfollow, name='follow_or_unfollow'),
+    path('rss/', views.rss, name='rss'),
     path('mirror-rss-feed/', views.mirror_rss_feed, name='mirror_rss_feed'),
-    path('import-rss-feed/', views.imported_rss_feed, name='imported_rss_feed'),
-    path('delete_imported_feed/<int:feed_id>/', views.delete_imported_feed, name='delete_imported_feed'),
-    path('landing/', views.landing, name='landing'),
     path('refresh-mirrored-rss-feed/', views.refresh_mirrored_rss_feed, name='refresh_mirrored_rss_feed'),
-    path('refresh-imported-rss-feed/', views.refresh_imported_rss_feed, name='refresh_imported_rss_feed'),
+    path('landing/', views.landing, name='landing'),
     path("edit_profile/", views.edit_profile, name="edit_profile"),
-    path("repost/<int:post_id>/", views.repost_view, name="repost"),
-    path('upload_css/', views.upload_css, name='upload_css'),
     path('search-users/', views.search_users, name='search_users'),
 
 ]

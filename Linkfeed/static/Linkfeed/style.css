@@ -5,6 +5,7 @@ body {
     padding-right: .5em;
     padding-left: .5em;
     overflow-x: hidden;
+    overflow-y: scroll; /* Turns the scrollbar always on */
 }
 
 a {

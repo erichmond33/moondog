@@ -1,0 +1,7 @@
+<form method="post" action="{% url 'mirror_rss_feed' %}">
+    {% csrf_token %}
+        <input type="url" name="link" placeholder="Enter RSS Feed link">
+    <button type="submit">Submit</button>
+</form>
+
+<a href="{% url 'refresh_mirrored_rss_feed' %}">Refresh</a>

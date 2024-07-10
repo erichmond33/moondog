@@ -7,13 +7,9 @@
 </p>
 
 <p class="small grey mt-0">
-    {% if post.is_imported_rss_feed_post %}
-        RSS Feed ({{ post.imported_rss_feed.link|slice:"8:" }})
-    {% elif not post.is_rss_feed_post or post.is_rss_feed_post %} <!-- the latter means it is a mirrored rss post -->
-        <a href="{% url 'profile' post.user.username %}" target="_blank">
-            {{ post.user.profile.display_name }}
-        </a>
-    {% endif %}  • 
+    <a href="{% url 'profile' post.user.username %}" target="_blank">
+        {{ post.user.profile.display_name }}
+    </a> • 
     
     {{ post.timestamp|date:"b j, Y"|capfirst }} • 
 
