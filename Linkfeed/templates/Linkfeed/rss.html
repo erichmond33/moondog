@@ -1,7 +1,18 @@
-<form method="post" action="{% url 'mirror_rss_feed' %}">
-    {% csrf_token %}
-        <input type="url" name="link" placeholder="Enter RSS Feed link">
-    <button type="submit">Submit</button>
-</form>
+{% extends "Linkfeed/layouts.html" %}
 
-<a href="{% url 'refresh_mirrored_rss_feed' %}">Refresh</a>
+{% block name %}
+    {{ profile.display_name }}
+{% endblock %}
+
+{% block body %}
+    <h2>
+        Mirror an RSS feed
+    </h2>
+    <form method="post" action="{% url 'mirror_rss_feed' %}" class="d-flex justify-content-between">
+        {% csrf_token %}
+        <input type="url" name="link" placeholder="Enter RSS Feed link">
+        <button type="submit">Submit</button>
+    </form>
+
+    <a href="{% url 'refresh_mirrored_rss_feed' %}">Refresh</a>
+{% endblock %}

@@ -414,7 +414,8 @@ def parse_timestamp(entry):
 
 @login_required
 def rss(request):
-    return render(request, 'Linkfeed/rss.html')
+    profile = Profile.objects.get(user=request.user)
+    return render(request, 'Linkfeed/rss.html', {'profile' : profile})
 
 def mirror_rss_feed(request):
     if request.method == 'POST':
@@ -440,10 +441,14 @@ def mirror_rss_feed(request):
 
     return redirect('profile')
 
-def refresh_mirrored_rss_feed(request):
+def refresh_mirrored_rss_feed_view(request):
     user = request.user
     rss_feed = RSSFeed.objects.filter(user=user).first()
+    refresh_mirrored_rss_feed(user, rss_feed)
 
+    return redirect('profile')
+
+def refresh_mirrored_rss_feed(user, rss_feed):
     if rss_feed:
         feed = feedparser.parse(rss_feed.link)
 
@@ -463,7 +468,7 @@ def refresh_mirrored_rss_feed(request):
                     is_rss_feed_post=True,
                     timestamp=post_timestamp
                 )
-    return redirect('profile')
+    return
 
 def landing(request):
     return render(request, 'Linkfeed/landingpage.html')
