@@ -1,0 +1,17 @@
+{% extends "Linkfeed/layouts.html" %}
+
+{% block name %}
+    {{ profile.display_name }}
+{% endblock %}
+
+{% block body %}
+    <p class="underline small text-end"><a href="{% url 'notifications_rss' profile.user.username %}">View as RSS</a></p>
+
+    {% for comment in notifications %}
+        {% include 'Linkfeed/notification.html'%}
+    {% endfor %}
+
+    {% if not notifications %}
+        <p>No notifications yet.</p>
+    {% endif %}
+{% endblock %}

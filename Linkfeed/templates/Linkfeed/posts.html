@@ -2,11 +2,7 @@
     <a href="{{ post.body }}" target="_blank">{{ post.title }}</a>
 </p>
 
-<p class="small red my-0 pt-1">
-    <a href="{{ post.body }}" target="_blank">{{ post.body }}</a>
-</p>
-
-<p class="small grey mt-0">
+<p class="small grey my-0 pt-1">
     <a href="{% url 'profile' post.user.username %}" target="_blank">
         {{ post.user.profile.display_name }}
     </a> • 
@@ -20,4 +16,7 @@
     <a href="#" id="like-{{ post.id }}" onclick="likePost('{{ post.id }}')">
         like {% if post.total_likes %}({{post.total_likes}}){% endif %}
     </a>
+</p>
+<p class="small red mt-0">
+    <a href="{{ post.body }}" target="_blank">{{ post.body }}</a>
 </p>

@@ -63,25 +63,31 @@ def current_user_feed(request):
 
      
 def feed(request, username):
-    # Retrieve the user object based on the username
+    context = get_user_feed(request, username)
+    return render(request, 'Linkfeed/feed.html', context)
+
+def feed_rss_view(request, username):
+    context = get_user_feed(request, username)
+    response = render(request, 'Linkfeed/feed_rss.xml', context)
+    response['Content-Type'] = 'application/xml'
+    return response
+
+def get_user_feed(request, username):
     user = User.objects.get(username=username)
     profile = Profile.objects.get(user=user)
 
-    # Retrieve the IDs of Linkfeed that the user is following
     following_ids = profile.following.all().values_list('id', flat=True)
-
-    # Retrieve posts from the Linkfeed that the user is following and not imported RSS feed posts
     posts = Post.objects.filter((Q(user__id__in=following_ids))).annotate(total_comments=Count('comments')).order_by('-timestamp')
 
-    # Check if the user has liked each post
     for post in posts:
         post.liked = post.likes.filter(id=user.id).exists()
 
-    # Check if the current user has liked each post
     for post in posts:
         post.liked = post.likes.filter(id=request.user.id).exists()
-    return render(request, 'Linkfeed/feed.html', {"posts" : posts, "profile" : profile})
 
+    context = {'posts': posts, 'profile': profile}
+
+    return context
 
 def login_view(request):
     if request.method == "POST":
@@ -182,6 +188,23 @@ def post(request, post_id):
         return render(request, "Linkfeed/post.html", {"post": post, "comments": comments, 'stuff': stuff, 'total_likes': total_likes, 'liked': liked, 'profile': profile})
     except Http404:
         return HttpResponse("404 - Post Not Found", status=404)
+
+def get_user_notifications(request, username):
+    user = User.objects.get(username=username)
+    profile = Profile.objects.get(user=user)
+    notifications = Comment.objects.filter(post__user=user).order_by('-timestamp')
+    context = {'notifications': notifications, 'profile': profile}
+    return context
+
+def notifications_view(request, username):
+    context = get_user_notifications(request, username)
+    return render(request, 'Linkfeed/notifications.html', context)
+
+def notifications_rss_view(request, username):
+    context = get_user_notifications(request, username)
+    response = render(request, 'Linkfeed/notifications_rss.xml', context)
+    response['Content-Type'] = 'application/xml'
+    return response
         
 def add_level(comments, level=0):
     for comment in comments:

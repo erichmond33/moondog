@@ -41,3 +41,11 @@ input, textarea {
 .preserve {
     white-space: pre-wrap;
 }
+
+.active {
+    color: #EA322E;
+}
+
+.underline {
+    text-decoration: underline;
+}

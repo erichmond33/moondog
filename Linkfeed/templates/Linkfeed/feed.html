@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block body %}
+    <p class="underline small text-end"><a href="{% url 'feed_rss' profile.user.username %}">View as RSS</a></p>
+
     {% for post in posts %}
         {% include 'Linkfeed/posts.html' %}
     {% endfor %}
