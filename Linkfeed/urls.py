@@ -34,9 +34,5 @@ urlpatterns = [
     path('refresh-mirrored-rss-feed/', views.refresh_mirrored_rss_feed_view, name='refresh_mirrored_rss_feed'),
     path('landing/', views.landing, name='landing'),
     path("edit_profile/", views.edit_profile, name="edit_profile"),
-    path('search-users/', views.search_users, name='search_users'),
-
+    path('search/', views.search_users, name='search'),
 ]
-         
-         
-

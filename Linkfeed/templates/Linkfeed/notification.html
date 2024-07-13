@@ -3,9 +3,9 @@
         <a href="{% url 'profile' comment.user.username %}" target="_blank">
             {{ comment.user.profile.display_name }}
         </a> • 
-        {{ comment.timestamp|date:"b j, Y"|capfirst }}
+        {{ comment.timestamp|date:"b j, Y"|capfirst }} • 
+        {{ comment.post.title }}
     </p>
-    <p class="small grey mb-0 mt-1">{{ comment.post.title }}</p>
     <p class="mb-0 mt-1 preserve">{{ comment.body }}</p>
     <p class="small mt-1 underline">
         <a href="#" onclick="unhideForm({{ comment.id }})">reply</a>

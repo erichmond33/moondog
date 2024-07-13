@@ -322,11 +322,17 @@ def edit_profile(request):
                 request.user.username = new_username
                 request.user.save()
 
+        # Update the email
+        new_email = request.POST.get('email')
+        if new_email:
+            request.user.email = new_email
+            request.user.save()
+
         # Redirect to the profile page after editing
         return redirect('profile') 
     else:
-        # Handle GET request (display edit profile form)
-        return HttpResponseForbidden("You are not authorized to edit this profile.")
+        profile = get_object_or_404(Profile, user=request.user)
+        return render(request, 'Linkfeed/edit_profile.html', {'profile': profile})
 
 def create_post(request):
     if request.method == "POST":
@@ -498,12 +504,20 @@ def landing(request):
 
 def search_users(request):
     if request.method == 'GET':
-        query = request.GET.get('query', '')
-        users = User.objects.filter(username__icontains=query)
-        user_list = [user.username for user in users]
-        return JsonResponse({'users': user_list})
-    else:
-        query = request.GET.get('query', '')
-        users = User.objects.filter(username__icontains=query)
-        user_list = [user.username for user in users]
-        return render(request, 'profile.html', {'users': user_list})
+        profile = Profile.objects.get(user=request.user)
+        return render(request, 'Linkfeed/search.html', {'profile': profile})
+    elif request.method == 'POST':
+        profile = Profile.objects.get(user=request.user)
+        query = request.POST.get('query')
+        profiles = Profile.objects.filter(
+            Q(user__username__icontains=query) | 
+            Q(display_name__icontains=query) | 
+            Q(domain__icontains=query)
+        ).annotate(
+            followers_count=Count('follower')
+        ).order_by(
+            '-followers_count'
+        ).exclude(
+            user__is_superuser=True
+        )
+        return render(request, 'Linkfeed/search.html', {'profiles': profiles, 'profile': profile, 'query': query})

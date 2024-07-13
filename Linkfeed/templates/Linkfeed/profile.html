@@ -26,6 +26,16 @@
             <input type="url" name="body" placeholder="URL" required>
             <button type="submit">Post</button>
         </form>
+    {% else %}
+        <div class="d-flex justify-content-end">
+            <button>
+                {% if user not in profile.follower.all %}
+                    <a href="{% url 'follow_or_unfollow' profile.user.username %}">Follow</a>
+                {% elif user in profile.follower.all %}
+                    <a href="{% url 'follow_or_unfollow' profile.user.username %}" id="following-text">Unfollow</a>
+                {% endif %}
+            </button>
+        </div>
     {% endif %}
 
     {% for post in posts %}

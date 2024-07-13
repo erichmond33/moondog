@@ -4,8 +4,6 @@
 <title>{{ post.title }}</title>
 <published>{{ post.timestamp|date:"Y-m-d\TH:i:s\Z" }}</published>
 <content type="html">
-        <a href="{{ post.body }}" target="_blank">{{ post.body }}</a>  • 
-
         <a href="{% url 'profile' post.user.username %}" target="_blank">
             {{ post.user.profile.display_name }}
         </a> • 
@@ -16,6 +14,8 @@
 
         <a href="#">
             likes ({{post.total_likes}})
-        </a>
+        </a> • 
+
+        <a href="{{ post.body }}" target="_blank">{{ post.body }}</a>
 </content>
 </entry>

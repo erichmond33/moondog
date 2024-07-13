@@ -18,6 +18,14 @@ a:hover {
     text-decoration: underline;
 }
 
+button a {
+    white-space: nowrap;
+}
+
+button a:hover {
+    text-decoration: none;
+}
+
 .small {
     font-size: smaller;
 }
@@ -48,4 +56,10 @@ input, textarea {
 
 .underline {
     text-decoration: underline;
+}
+
+.ellipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
