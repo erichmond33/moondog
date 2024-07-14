@@ -5,15 +5,19 @@
 {% endblock %}
 
 {% block body %}
+    <h2>
+        Post
+    </h2>
+
     {% if post %}
-        {% include 'Linkfeed/posts.html' %}
+        <div class="mt-4">{% include 'Linkfeed/posts.html' %}</div>
     {% endif %}
 
     <form method="post" action="{% url 'add_comment' post.id %}">
         {% csrf_token %}
             <textarea name="body" rows="4" placeholder="Add a comment..."required></textarea>
             <button type="submit">
-                Post
+                Comment
             </button>
     </form>
 

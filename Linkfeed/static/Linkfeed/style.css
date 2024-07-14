@@ -1,6 +1,7 @@
 body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     max-width:40em;
+    font-size: 11pt;
     margin: 0 auto;
     padding-right: .5em;
     padding-left: .5em;
@@ -16,6 +17,10 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+.post a:visited {
+    color: #666;
 }
 
 button a {
@@ -62,4 +67,14 @@ input, textarea {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+
+.unread {
+    background-color: #f3f3f3;
+}
+
+@media screen and (max-width: 440px){
+    nav {
+        font-size: smaller;
+    }
 }

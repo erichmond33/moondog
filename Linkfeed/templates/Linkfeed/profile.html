@@ -26,19 +26,29 @@
             <input type="url" name="body" placeholder="URL" required>
             <button type="submit">Post</button>
         </form>
+        <h2>
+            Posts
+        </h2>
     {% else %}
-        <div class="d-flex justify-content-end">
-            <button>
-                {% if user not in profile.follower.all %}
-                    <a href="{% url 'follow_or_unfollow' profile.user.username %}">Follow</a>
-                {% elif user in profile.follower.all %}
-                    <a href="{% url 'follow_or_unfollow' profile.user.username %}" id="following-text">Unfollow</a>
-                {% endif %}
-            </button>
+        <div class="d-flex justify-content-between">
+            <h2 class="mt-0">
+                Posts
+            </h2>
+            <div>
+                <button>
+                    {% if user not in profile.follower.all %}
+                        <a href="{% url 'follow_or_unfollow' profile.user.username %}">Follow</a>
+                    {% elif user in profile.follower.all %}
+                        <a href="{% url 'follow_or_unfollow' profile.user.username %}" id="following-text">Unfollow</a>
+                    {% endif %}
+                </button>
+            </div>
         </div>
     {% endif %}
 
     {% for post in posts %}
-        {% include 'Linkfeed/posts.html' %}
+        <div class="post">
+            {% include 'Linkfeed/posts.html' %}
+        </div>
     {% endfor %}
 {% endblock %}

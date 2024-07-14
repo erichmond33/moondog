@@ -58,6 +58,7 @@ class Comment(models.Model):
     likes = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
     level = models.IntegerField(default=0)
+    read = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username} : {self.post.title} : {self.body} : {self.timestamp}"

@@ -5,10 +5,15 @@
 {% endblock %}
 
 {% block body %}
-    <p class="underline small text-end"><a href="{% url 'feed_rss' profile.user.username %}">View as RSS</a></p>
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Feed</h2>
+        <p class="underline small"><a href="{% url 'feed_rss' profile.user.username %}">View as RSS</a></p>
+    </div>
 
     {% for post in posts %}
-        {% include 'Linkfeed/posts.html' %}
+        <div class="post">
+            {% include 'Linkfeed/posts.html' %}
+        </div>
     {% endfor %}
 
     {% if not posts %}

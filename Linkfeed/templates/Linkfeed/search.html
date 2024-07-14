@@ -12,24 +12,27 @@
         <button type="submit">Submit</button>
     </form>
     
-    <h3>Results</h3>
-    <div id="searchResults">
-        {% for profile in profiles %}
-            <p class="mb-0">
-                <a href="{% url 'profile' profile.user.username %}">
-                    <span class="display-name">{{ profile.display_name }}</span>
-                    <span class="small grey">(@<span class="username">{{ profile.user.username }}</span>)</span>
-                </a>
-            </p>
-            <p class="mt-0">
-                <a class="red small" href="{{ profile.domain }}" target="_blank">
-                    <span class="domain">{{ profile.domain }}</span>
-                </a>
-            </p>
-        {% empty %}
-            <p>No results found.</p>
-        {% endfor %}
-    </div>
+    {% if query %}
+        <h3>Results</h3>
+        <div id="searchResults">
+            {% for profile in profiles %}
+                <p class="mb-0">
+                    <a href="{% url 'profile' profile.user.username %}">
+                        <span class="display-name">{{ profile.display_name }}</span>
+                        <span class="small grey">(@<span class="username">{{ profile.user.username }}</span>)</span>
+                    </a>
+                </p>
+                <p class="mt-0">
+                    <a class="red small" href="{{ profile.domain }}" target="_blank">
+                        <span class="domain">{{ profile.domain }}</span>
+                    </a>
+                </p>
+            
+            {% empty %}
+                <p>No results found.</p>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <script>
         function highlightText(text, query) {

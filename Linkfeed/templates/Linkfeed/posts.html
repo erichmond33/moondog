@@ -1,21 +1,28 @@
-<p class="mb-0">
+{% load custom_filters %}
+
+<p class="my-0">
     <a href="{{ post.body }}" target="_blank">{{ post.title }}</a>
 </p>
 
 <p class="small grey my-0 pt-1">
     <a href="{% url 'profile' post.user.username %}" target="_blank">
         {{ post.user.profile.display_name }}
-    </a> • 
-    
-    {{ post.timestamp|date:"b j, Y"|capfirst }} • 
+    </a> •
+
+    {{ post.timestamp|smart_date|capfirst }} •
 
     <a href="{% url 'post' post.id %}">
-        comment {% if post.total_comments %}({{post.total_comments}}){% endif %} 
-    </a> • 
+        comment {% if post.total_comments %}({{post.total_comments}}){% endif %}
+    </a> •
 
     <a href="#" id="like-{{ post.id }}" onclick="likePost('{{ post.id }}')">
-        like {% if post.total_likes %}({{post.total_likes}}){% endif %}
+        {% if post.liked %}liked{% else %}like{% endif %}
+        {% if post.total_likes %}({{post.total_likes}}){% endif %}
     </a>
+
+    {% if request.user == post.user %}
+        • <a href="{% url 'edit_post' post.id %}">edit</a>
+    {% endif %}
 </p>
 <p class="small red mt-0">
     <a href="{{ post.body }}" target="_blank">{{ post.body }}</a>

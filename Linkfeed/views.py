@@ -196,8 +196,8 @@ def get_user_notifications(request, username):
     context = {'notifications': notifications, 'profile': profile}
     return context
 
-def notifications_view(request, username):
-    context = get_user_notifications(request, username)
+def notifications_view(request):
+    context = get_user_notifications(request, request.user.username)
     return render(request, 'Linkfeed/notifications.html', context)
 
 def notifications_rss_view(request, username):
@@ -205,6 +205,20 @@ def notifications_rss_view(request, username):
     response = render(request, 'Linkfeed/notifications_rss.xml', context)
     response['Content-Type'] = 'application/xml'
     return response
+
+def mark_notification_as_read(request, username):
+    if request.method == 'POST':
+        if request.user == User.objects.get(username=username):
+            user = User.objects.get(username=username)
+            notifications = Comment.objects.filter(post__user=user, read=False)
+            for notification in notifications:
+                notification.read = True
+                notification.save()
+            return JsonResponse({'message': 'Notifications marked as read'})
+        else:
+            return HttpResponseForbidden(JsonResponse({'message': 'You are not authorized to mark notifications as read'}))
+    else:
+        return HttpResponseBadRequest(JsonResponse({'message': 'Invalid request method'}))
         
 def add_level(comments, level=0):
     for comment in comments:
@@ -245,8 +259,7 @@ def delete_comment(request, comment_id):
             # Check if the user is the owner of the comment or the owner of the post
             if comment.user == request.user or comment.post.user == request.user:
                 comment.delete()
-                # Redirect to the previous page
-                return redirect(request.META.get('HTTP_REFERER', '/'))
+                return redirect("post", post_id=comment.post.id)
             else:
                 # Handle unauthorized deletion
                 messages.error(request, 'You are not authorized to delete this comment.')
@@ -256,7 +269,23 @@ def delete_comment(request, comment_id):
     # If the request method is not POST or deletion fails, redirect to the previous page
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
-
+@login_required
+def edit_comment(request, comment_id):
+    if request.method == "POST":
+        comment = get_object_or_404(Comment, id=comment_id)
+        if request.user.is_authenticated and comment.user == request.user:
+            comment.body = request.POST.get("body")
+            comment.save()
+            return redirect("post", post_id=comment.post.id)
+        else:
+            return HttpResponseForbidden("You are not authorized to edit this post.")
+    elif request.method == "GET":
+        profile = Profile.objects.get(user=request.user)
+        comment = get_object_or_404(Comment, id=comment_id)
+        if request.user == comment.user:
+            return render(request, "Linkfeed/edit_comment.html", {"comment": comment, "profile": profile})
+        else:
+            return HttpResponseForbidden("You are not authorized to edit this post.")
 
 
 
@@ -266,27 +295,37 @@ def delete_post(request, post_id):
         # Check if the user is authenticated and is the owner of the post
         if request.user.is_authenticated and post.user == request.user:
             post.delete()
-            # Redirect back to the same page
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('profile')))
+            return redirect("profile")
         else:
             # Handle unauthorized deletion
             return HttpResponseForbidden("You are not authorized to delete this post.")
 
+@login_required
 def edit_post(request, post_id):
     if request.method == "POST":
         post = get_object_or_404(Post, id=post_id)
         # Check if the user is authenticated and is the owner of the post
         if request.user.is_authenticated and post.user == request.user:
             # Update the post title and body with the new values
-            post.title = request.POST.get("post_title")
-            post.body = request.POST.get("post_body")
+            post_title = request.POST.get("title")
+            if post_title:
+                post.title = post_title
+            post_body = request.POST.get("body")
+            if post_body:
+                post.body = post_body
             post.save()
             # Redirect back to the post detail page after editing the post
             return redirect("post", post_id=post_id)
         else:
             # Handle unauthorized edits
             return HttpResponseForbidden("You are not authorized to edit this post.")
-    # Handle other HTTP methods if necessary
+    elif request.method == "GET":
+        profile = Profile.objects.get(user=request.user)
+        post = get_object_or_404(Post, id=post_id)
+        if request.user == post.user:
+            return render(request, "Linkfeed/edit_post.html", {"post": post, "profile": profile})
+        else:
+            return HttpResponseForbidden("You are not authorized to edit this post.")
 
 
 @login_required  # Ensure the user is logged in 
@@ -351,11 +390,14 @@ def like_view(request, post_id):
     if request.method == 'POST':
         post = Post.objects.get(id=post_id)
         user = request.user
+        liking = True
         if user in post.likes.all():
             post.likes.remove(user)
+            liking = False
         else:
             post.likes.add(user)
-        return JsonResponse({'total_likes': post.total_likes()})
+            liking = True
+        return JsonResponse({'total_likes': post.total_likes(), 'liking': liking})
     else:
         return HttpResponseBadRequest("Invalid request method")
 
