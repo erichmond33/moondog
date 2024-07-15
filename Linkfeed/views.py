@@ -486,36 +486,28 @@ def parse_timestamp(entry):
 @login_required
 def rss(request):
     profile = Profile.objects.get(user=request.user)
-    return render(request, 'Linkfeed/rss.html', {'profile' : profile})
+    rss_feeds = RSSFeed.objects.filter(user=request.user)
+    return render(request, 'Linkfeed/rss.html', {'profile' : profile, 'rss_feeds': rss_feeds})
 
 def mirror_rss_feed(request):
     if request.method == 'POST':
         rss_link = request.POST.get('link')
         user = request.user
 
-        if RSSFeed.objects.filter(user=user).exists():
-            return redirect('profile')
+        if RSSFeed.objects.filter(user=user, link=rss_link).exists():
+            return HttpResponseBadRequest("RSS Feed already exists")
 
         rss_feed = RSSFeed.objects.create(user=user, link=rss_link)
-        rss_feed = feedparser.parse(rss_feed.link)
         
-        for entry in reversed(rss_feed.entries):
-            post_timestamp = None
-            title = entry.get('title', 'No Title')
-            body = entry.get('link', 'No Link')
-                
-            post_timestamp = parse_timestamp(entry)
-            if post_timestamp is None:
-                post_timestamp = datetime.now()
-            
-            Post.objects.create(user=user, title=title, body=body, is_rss_feed_post=True, timestamp=post_timestamp)
+        refresh_mirrored_rss_feed(user, rss_feed)
 
     return redirect('profile')
 
 def refresh_mirrored_rss_feed_view(request):
     user = request.user
-    rss_feed = RSSFeed.objects.filter(user=user).first()
-    refresh_mirrored_rss_feed(user, rss_feed)
+    rss_feeds = RSSFeed.objects.filter(user=user)
+    for rss_feed in rss_feeds:
+        refresh_mirrored_rss_feed(user, rss_feed)
 
     return redirect('profile')
 
@@ -540,6 +532,14 @@ def refresh_mirrored_rss_feed(user, rss_feed):
                     timestamp=post_timestamp
                 )
     return
+
+def delete_rss_feed(request, rss_feed_id):
+    if request.method == 'POST':
+        rss_feed = RSSFeed.objects.get(id=rss_feed_id)
+        rss_feed.delete()
+        return redirect('rss')
+    else:
+        return HttpResponseBadRequest("Invalid request method")
 
 def landing(request):
     return render(request, 'Linkfeed/landingpage.html')

@@ -13,7 +13,7 @@
         {% include 'Linkfeed/posts.html' %}
     {% endif %}
 
-    <form method="post" action="{% url 'edit_post' post.id %}" class="d-flex justify-content-between">
+    <form method="post" action="{% url 'edit_post' post.id %}">
         {% csrf_token %}
         <input type="text" name="title" placeholder="Title" value="{{ post.title }}">
         <input type="url" name="body" placeholder="URL" value="{{ post.body }}">
