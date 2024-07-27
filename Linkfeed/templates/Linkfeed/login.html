@@ -17,7 +17,7 @@
       {% csrf_token %}
       <h3>Login</h3>
       <div class="form-group">
-        <input type="text" autofocus class="form-control" name="username" placeholder="Username">
+        <input type="text" autofocus class="form-control" name="email_or_username" placeholder="Email or Username">
       </div>
       <!-- <div class="form-group">
         <input type="text" class="form-control" name="website" placeholder="Personal website URL">
@@ -30,7 +30,7 @@
       </div>
     </form>
     Don't have an account?
-    <a href=" {% url 'register' %} "> Register here.</a>
+    <a class="red" href=" {% url 'register' %} "> Register here.</a>
   </div>
 </div>
 

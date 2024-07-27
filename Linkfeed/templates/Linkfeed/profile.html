@@ -51,4 +51,9 @@
             {% include 'Linkfeed/posts.html' %}
         </div>
     {% endfor %}
+
+    {% if not posts %}
+        <p>No posts yet</p>
+    {% endif %}
+
 {% endblock %}

@@ -14,8 +14,6 @@ import datetime
 import dateutil.parser 
 from django.db.models import Q
 from datetime import datetime
-import pytz
-import time 
 from django.db.models import Count
 from django.views.decorators.http import require_GET
 
@@ -24,7 +22,7 @@ def index(request):
     if request.user.is_authenticated:
         return redirect('profile', username=request.user.username)
     else:
-        return render(request, "Linkfeed/landingpage.html")
+        return render(request, "Linkfeed/login.html")
     
 def landing(request):
     return render(request, "Linkfeed/landingpage.html")
@@ -91,15 +89,27 @@ def get_user_feed(request, username):
 
 def login_view(request):
     if request.method == "POST":
-        username = request.POST["username"]
+        email_or_username = request.POST["email_or_username"]
         password = request.POST["password"]
+
+        # Check if the input is an email
+        if '@' in email_or_username:
+            try:
+                user = User.objects.get(email=email_or_username)
+                username = user.username
+                print(username)
+            except User.DoesNotExist:
+                username = email_or_username
+        else:
+            username = email_or_username
+        
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             # Pass the authentication token to the session
             # request.session['auth_token'] = request.session.session_key
             # return HttpResponseRedirect(reverse("index"))
-            return redirect('profile', username=username)
+            return redirect('profile', username=user.username)
         else:
             return render(request, "Linkfeed/login.html", {
                 "message": "Invalid credentials."
@@ -129,8 +139,15 @@ def register(request):
             return render(request, "Linkfeed/register.html", {
                 "message": "Passwords must match."
             })
+        
+        # Check if email is already used
+        if User.objects.filter(email=email).exists():
+            return render(request, "Linkfeed/register.html", {
+                "message": "Email already used."
+            })
 
         try:
+            # Check if username is already taken
             username_taken = True
             while username_taken:
                 try:
@@ -238,6 +255,7 @@ def add_comment(request, post_id):
         # Redirect to the post detail page after adding the comment
         return redirect("post", post_id=post_id)
 
+@login_required
 def reply_comment(request, comment_id):
     if request.method == "POST":
         parent_comment = get_object_or_404(Comment, id=comment_id)
@@ -251,6 +269,7 @@ def reply_comment(request, comment_id):
 from django.shortcuts import redirect
 from django.contrib import messages
 
+@login_required
 def delete_comment(request, comment_id):
     if request.method == "POST" or request.method == "GET":
         comment = get_object_or_404(Comment, id=comment_id)
@@ -287,8 +306,7 @@ def edit_comment(request, comment_id):
         else:
             return HttpResponseForbidden("You are not authorized to edit this post.")
 
-
-
+@login_required
 def delete_post(request, post_id):
     if request.method == "POST":
         post = get_object_or_404(Post, id=post_id)
@@ -373,6 +391,7 @@ def edit_profile(request):
         profile = get_object_or_404(Profile, user=request.user)
         return render(request, 'Linkfeed/edit_profile.html', {'profile': profile})
 
+@login_required
 def create_post(request):
     if request.method == "POST":
         title = request.POST.get('title')
@@ -489,6 +508,7 @@ def rss(request):
     rss_feeds = RSSFeed.objects.filter(user=request.user)
     return render(request, 'Linkfeed/rss.html', {'profile' : profile, 'rss_feeds': rss_feeds})
 
+@login_required
 def mirror_rss_feed(request):
     if request.method == 'POST':
         rss_link = request.POST.get('link')
